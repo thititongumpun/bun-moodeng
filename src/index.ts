@@ -41,7 +41,12 @@ export const app = new Elysia()
   })
   .get("/memes", async ({ query }) => {
     const publicUrls: Meme[] = [];
-    const { data, error } = await storageClient.from(bucket).list(query.folder ?? "video")
+    const { data, error } = await storageClient.from(bucket).list(query.folder ?? "video", {
+      limit: query.limit ?? 8,
+      offset: query.offset ?? 0,
+      sortBy: { column: 'created_at', order: 'desc' },
+      search: query.search ?? undefined
+    })
     if (!error) {
       for (const item of data) {
         const { data } = await storageClient.from(bucket).getPublicUrl(`${query.folder ?? "video"}/${item.name}`)
@@ -55,7 +60,10 @@ export const app = new Elysia()
     return publicUrls
   }, {
     query: t.Object({
-      folder: t.Optional(t.String())
+      folder: t.Optional(t.String()),
+      limit: t.Optional(t.Numeric()),
+      offset: t.Optional(t.Numeric()),
+      search: t.Optional(t.String()),
     })
   })
   .post("/upload", async ({ body }) => {
@@ -79,6 +87,6 @@ export const app = new Elysia()
   })
   .listen(3000);
 
-  console.log(
-    `Elysia is running at ${app.server?.hostname}:${app.server?.port}`
-  );
+console.log(
+  `Elysia is running at ${app.server?.hostname}:${app.server?.port}`
+);
