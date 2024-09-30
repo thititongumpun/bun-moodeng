@@ -14,7 +14,7 @@ export const app = new Elysia()
     enabled: true
   }))
   .use(cors({
-    origin: ['http://localhost:5173', 'https://wcydtt.co'],
+    origin: ['http://localhost:5173', 'https://wcydtt.co', 'https://www.wcydtt.co'],
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
   }))
