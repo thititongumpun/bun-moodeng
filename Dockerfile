@@ -10,6 +10,11 @@ RUN bun install
 
 COPY ./src ./src
 
+ARG STORAGE_URL
+ARG SERVICE_KEY
+
+ENV STORAGE_URL=${STORAGE_URL}
+ENV SERVICE_KEY=${SERVICE_KEY}
 ENV NODE_ENV=production
 
 RUN bun build \
