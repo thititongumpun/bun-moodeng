@@ -3,20 +3,15 @@ import { storageClient } from "./storage";
 import { swagger } from '@elysiajs/swagger'
 import { Meme } from "./types/meme";
 import cors from "@elysiajs/cors";
-import logixlysia from 'logixlysia'
+import { logger } from "@tqman/nice-logger";
 
 const bucket = 'memes_bucket'
 
 export const app = new Elysia()
   .use(swagger())
-  .use(logixlysia({
-    config: {
-      showStartupMessage: true,
-      startupMessageFormat: 'banner',
-      ip: true,
-      customLogFormat:
-        '🦊 {now} {level} {duration} {method} {pathname} {status} {message} {ip} {epoch}',
-    }
+  .use(logger({
+    mode: "combined",
+    enabled: true
   }))
   .use(cors({
     origin: ['http://localhost:5173', 'https://wcydtt.co'],
@@ -83,3 +78,7 @@ export const app = new Elysia()
     })
   })
   .listen(3000);
+
+  console.log(
+    `Elysia is running at ${app.server?.hostname}:${app.server?.port}`
+  );
