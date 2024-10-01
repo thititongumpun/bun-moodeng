@@ -72,15 +72,14 @@ export const app = new Elysia()
       const result = await cloudinary.uploader.upload(`data:image/webp;base64,${inputStream.toString('base64')}`, {
         folder: 'wcydtt',
         public_id: name,
-        transformation: { crop: 'scale' },
-        fetch_format: 'webp',
+        transformation: { width: 1200, height: 800, crop: 'limit', fetch_format: 'auto', quality: 'auto' }
       });
 
       const response = await fetch(result.secure_url);
       const imageBuffer = await response.arrayBuffer();
 
       const { data, error } = await storageClient.from(bucket).upload(`images/${name}`, imageBuffer, {
-        contentType: 'image/webp'
+        contentType: 'image/webp',
       })
 
       if (error) {
