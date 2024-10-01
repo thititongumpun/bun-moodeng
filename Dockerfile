@@ -1,14 +1,16 @@
-FROM oven/bun:alpine AS build
+FROM oven/bun:debian AS build
 
 WORKDIR /app
 
-RUN apk add --no-cache \
-    libc6-compat \
-    vips-dev \
+RUN apt-get update && apt-get install -y \
+    libc6-dev \
+    libvips-dev \
     gcc \
     g++ \
     make \
-    python3
+    python3 \
+    --no-install-recommends && \
+    rm -rf /var/lib/apt/lists/*
 
 # Cache packages installation
 COPY package.json package.json
