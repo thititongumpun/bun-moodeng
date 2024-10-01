@@ -2,12 +2,20 @@ FROM oven/bun:alpine AS build
 
 WORKDIR /app
 
+RUN apk add --no-cache \
+    libc6-compat \
+    vips-dev \
+    gcc \
+    g++ \
+    make \
+    python3
+
 # Cache packages installation
 COPY package.json package.json
 COPY bun.lockb bun.lockb
 
 RUN bun install
-RUN bun install sharp --os=linux --cpu=x64
+# RUN bun install sharp --os=linux --cpu=x64
 
 COPY ./src ./src
 
