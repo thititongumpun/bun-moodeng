@@ -4,6 +4,7 @@ import { swagger } from '@elysiajs/swagger'
 import { Meme } from "./types/meme";
 import cors from "@elysiajs/cors";
 import { logger } from "@tqman/nice-logger";
+import cloudinary from "./cloudinary";
 
 const bucket = 'memes_bucket'
 
@@ -19,10 +20,6 @@ export const app = new Elysia()
     allowedHeaders: ['Content-Type', 'Authorization'],
   }))
   .get("/", () => "Hello Elysia")
-  .get("/storage", async () => {
-    const { data } = await storageClient.from(bucket).getPublicUrl('video/PigTweak.mp4')
-    return data.publicUrl
-  })
   .get("/list", async ({ query }) => {
     const { data } = await storageClient.from(bucket).list(query.folder, {
       limit: query.limit ?? 100,
@@ -68,12 +65,28 @@ export const app = new Elysia()
   })
   .post("/upload", async ({ body }) => {
     const { name, type } = body.file
-
     if (type.startsWith('image')) {
-      const { data, error } = await storageClient.from(bucket).upload(`images/${name}`, body.file, {
+      const arrayBuffer = await body.file.arrayBuffer()
+      const inputStream = Buffer.from(arrayBuffer)
+
+      const result = await cloudinary.uploader.upload(`data:image/webp;base64,${inputStream.toString('base64')}`, {
+        folder: 'wcydtt',
+        public_id: name,
+        transformation: { crop: 'scale' },
+        fetch_format: 'webp',
+      });
+
+      const response = await fetch(result.secure_url);
+      const imageBuffer = await response.arrayBuffer();
+
+      const { data, error } = await storageClient.from(bucket).upload(`images/${name}`, imageBuffer, {
         contentType: 'image/webp'
       })
-      if (error) throw error
+
+      if (error) {
+        throw new Error(`Error uploading image to Supabase: ${error.message}`);
+      }
+
       return {
         url: data?.fullPath
       }
