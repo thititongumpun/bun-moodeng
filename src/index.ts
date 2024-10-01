@@ -4,7 +4,7 @@ import { swagger } from '@elysiajs/swagger'
 import { Meme } from "./types/meme";
 import cors from "@elysiajs/cors";
 import { logger } from "@tqman/nice-logger";
-import sharp from 'sharp';
+import sharp from "sharp";
 
 const bucket = 'memes_bucket'
 
@@ -76,6 +76,7 @@ export const app = new Elysia()
       const webpBuffer = await sharp(inputBuffer)
         .webp()
         .toBuffer();
+      console.log(webpBuffer);
       const { data, error } = await storageClient.from(bucket).upload(`images/${name}.webp`, webpBuffer, {
         contentType: 'image/webp'
       })

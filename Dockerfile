@@ -7,6 +7,7 @@ COPY package.json package.json
 COPY bun.lockb bun.lockb
 
 RUN bun install
+RUN bun install sharp --os=linux --cpu=x64
 
 COPY ./src ./src
 
