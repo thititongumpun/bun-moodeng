@@ -70,12 +70,12 @@ export const app = new Elysia()
   .post("/upload", async ({ body }) => {
     const { name, type } = body.file
 
-    const buffer = await body.file.arrayBuffer()
-    const inputBuffer = Buffer.from(buffer)
-    const webpBuffer = await sharp(inputBuffer)
-      .webp()
-      .toBuffer();
-    if (type.startsWith('image')) {
+    if (type.startsWith('image') && type.startsWith('gif')) {
+      const buffer = await body.file.arrayBuffer()
+      const inputBuffer = Buffer.from(buffer)
+      const webpBuffer = await sharp(inputBuffer)
+        .webp()
+        .toBuffer();
       const { data, error } = await storageClient.from(bucket).upload(`images/${name}.webp`, webpBuffer, {
         contentType: 'image/webp'
       })
@@ -84,6 +84,17 @@ export const app = new Elysia()
         url: data?.fullPath
       }
     }
+
+    if (type.startsWith('image') && !type.endsWith('gif')) {
+      const { data, error } = await storageClient.from(bucket).upload(`images/${name}`, body.file, {
+        contentType: 'image/webp'
+      })
+      if (error) throw error
+      return {
+        url: data?.fullPath
+      }
+    }
+
     const { data, error } = await storageClient.from(bucket).upload(`video/${name}`, body.file)
     if (error) throw error
     return {
