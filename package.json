@@ -13,8 +13,7 @@
     "@supabase/storage-js": "^2.7.0",
     "@tqman/nice-logger": "^1.0.1",
     "elysia": "latest",
-    "logixlysia": "^3.7.0",
-    "sharp": "^0.33.5"
+    "logixlysia": "^3.7.0"
   },
   "devDependencies": {
     "bun-types": "latest"
