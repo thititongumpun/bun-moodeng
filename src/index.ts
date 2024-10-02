@@ -72,7 +72,7 @@ export const app = new Elysia()
       const result = await cloudinary.uploader.upload(`data:image/webp;base64,${inputStream.toString('base64')}`, {
         folder: 'wcydtt',
         public_id: name,
-        transformation: { width: 1200, height: 800, crop: 'auto', fetch_format: 'auto', quality: 'auto' }
+        transformation: { width: 1200, height: 800, crop: 'fit',  fetch_format: 'auto', quality: 'auto' }
       });
 
       const response = await fetch(result.secure_url);
